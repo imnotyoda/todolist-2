@@ -3,111 +3,141 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>To-Do List</title>
+<title>To-Do List PWA</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#4CAF50">
 
 <style>
-body{
+body {
     font-family: Arial, sans-serif;
     background: linear-gradient(135deg, #74ebd5, #9face6);
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    height:100vh;
-    margin:0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
 }
 
-/* CONTAINER */
-.container{
-    background:white;
-    padding:25px;
-    width:350px;
-    border-radius:10px;
-    box-shadow:0 10px 25px rgba(0,0,0,0.2);
+.container {
+    background: #fff;
+    padding: 25px;
+    width: 350px;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
 }
 
-/* TITLE */
-h2{
-    text-align:center;
-    color:#333;
+h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
 }
 
-/* INPUT AREA */
-.input-group{
-    display:flex;
-    gap:10px;
+.input-group {
+    display: flex;
+    gap: 10px;
 }
 
-input{
-    flex:1;
-    padding:10px;
-    border:1px solid #ccc;
-    border-radius:5px;
+input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    outline: none;
 }
 
-/* BUTTON */
-button{
-    padding:10px 15px;
-    border:none;
-    background:#4CAF50;
-    color:white;
-    cursor:pointer;
-    border-radius:5px;
+button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    background: #4CAF50;
+    color: white;
+    cursor: pointer;
+    transition: 0.3s;
 }
 
-button:hover{
-    background:#45a049;
+button:hover {
+    background: #45a049;
 }
 
-/* LIST */
-ul{
-    list-style:none;
-    padding:0;
-    margin-top:15px;
+ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 15px;
 }
 
-li{
-    background:#f1f5ff;
-    padding:10px;
-    margin-bottom:8px;
-    display:flex;
-    justify-content:space-between;
-    border-radius:5px;
+li {
+    background: #f1f5ff;
+    padding: 10px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 5px;
 }
 
-/* DELETE BUTTON */
-.delete{
-    background:#ff4d4d;
+.delete {
+    background: #ff4d4d;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;
+    transition: 0.3s;
+}
+
+.delete:hover {
+    background: #e04343;
 }
 </style>
 </head>
-
 <body>
 
 <div class="container">
     <h2>To-Do List</h2>
-
     <div class="input-group">
         <input type="text" id="taskInput" placeholder="Enter task">
         <button onclick="addTask()">Add</button>
     </div>
-
     <ul id="taskList"></ul>
 </div>
 
 <script>
-function addTask(){
+// Add Task Function
+function addTask() {
     const input = document.getElementById("taskInput");
     const task = input.value.trim();
 
-    if(task){
-        const li = document.createElement("li");
-        li.innerHTML = `
-            <span>${task}</span>
-            <button class="delete" onclick="this.parentElement.remove()">X</button>
-        `;
-        document.getElementById("taskList").appendChild(li);
-        input.value="";
+    if(task === "") {
+        alert("Please enter a task!");
+        return;
     }
+
+    const li = document.createElement("li");
+
+    const span = document.createElement("span");
+    span.textContent = task;
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.textContent = "X";
+    deleteBtn.className = "delete";
+    deleteBtn.onclick = () => li.remove();
+
+    li.appendChild(span);
+    li.appendChild(deleteBtn);
+
+    document.getElementById("taskList").appendChild(li);
+
+    input.value = "";
+    input.focus();
+}
+
+// Register Service Worker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./service-worker.js')
+      .then(reg => console.log('Service Worker registered', reg))
+      .catch(err => console.log('Service Worker registration failed', err));
+  });
 }
 </script>
 
